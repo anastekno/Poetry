@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ديوان الشعر الرقمي</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4ecd8;
+            background-image: radial-gradient(circle, #fbf7eb 0%, #e6d5b3 70%, #c5b083 100%);
+            font-family: 'Amiri', serif;
+            margin: 0;
+            padding: 20px;
+            color: #3a2e1d;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+            color: #5c4314;
+            border-bottom: 2px double #8c6d31;
+            padding-bottom: 10px;
+        }
+
+        #poems-container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* برواز الورق الذهبي القديم */
+        .poem-card {
+            background: #fffdf7;
+            border: 10px solid transparent;
+            border-image: linear-gradient(to bottom right, #8c6d31, #ffd700, #b3924b, #ffd700, #8c6d31) 10;
+            padding: 35px;
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(92, 67, 20, 0.2);
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .poem-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* حاوية ترويسة القصيدة والشاعر */
+        .poem-header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px double rgba(140, 109, 49, 0.4);
+            padding-bottom: 15px;
+        }
+
+        .poem-title {
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.6rem;
+            color: #8c6d31;
+            margin: 0 0 5px 0;
+            font-weight: 700;
+        }
+
+        .poem-author {
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.1rem;
+            color: #7d663e;
+            margin: 0;
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .poem-verses {
+            text-align: center;
+            font-size: 1.4rem;
+            line-height: 2.2;
+        }
+
+        /* تنسيق الأبيات على الشاشات الكبيرة */
+        .verse {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            max-width: 650px;
+            margin: 0 auto 15px auto;
+            border-bottom: 1px dashed rgba(140, 109, 49, 0.15);
+            padding-bottom: 5px;
+        }
+
+        .shatr {
+            width: 45%;
+            white-space: nowrap;
+        }
+
+        .sadr { text-align: left; }
+        .ajuz { text-align: right; }
+
+        .loading {
+            font-size: 1.5rem;
+            color: #8c6d31;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        /* حل مشكلة الهاتف والتحكم في حجم الشاشات */
+        @media (max-width: 650px) {
+            body { padding: 10px; }
+            header h1 { font-size: 2rem; }
+            .poem-card { padding: 20px 15px; border-width: 6px; }
+            .poem-title { font-size: 1.3rem; }
+            .poem-author { font-size: 0.95rem; }
+            .poem-verses { font-size: 1.15rem; line-height: 1.9; }
+            .verse {
+                flex-direction: column; 
+                gap: 5px; 
+                align-items: center;
+                border-bottom: 1px dashed rgba(140, 109, 49, 0.1);
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+            }
+            .shatr {
+                width: 100%;
+                text-align: center;
+                white-space: normal;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ديوان الشعر العربي</h1>
+    </header>
+
+    <main id="poems-container">
+        <div class="loading">جاري فتح الديوان واستدعاء الأبيات الفاخرة...</div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            databaseURL: "https://poetry-anas-default-rtdb.firebaseio.com",
+            projectId: "poetry-anas"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const container = document.getElementById('poems-container');
+
+        const poemsRef = ref(db, 'poems');
+        onValue(poemsRef, (snapshot) => {
+            container.innerHTML = "";
+            const data = snapshot.val();
+
+            if (!data) {
+                container.innerHTML = "<div class='loading'>الديوان فارغ حالياً.. بانتظار إبداعك في لوحة التحكم.</div>";
+                return;
+            }
+
+            const poemsList = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+            poemsList.reverse(); // الأحدث يظهر أولاً
+
+            poemsList.forEach((poem) => {
+                const poemCard = document.createElement('div');
+                poemCard.className = 'poem-card';
+
+                // صياغة الهيدر (العنوان + اسم الشاعر)
+                const titleText = poem.title || "بدون عنوان";
+                const authorText = poem.author ? `بقلم الشاعر: ${poem.author}` : "شاعر مجهول";
+                const headerHtml = `
+                    <div class="poem-header">
+                        <h2 class="poem-title">ـ ${titleText} ـ</h2>
+                        <p class="poem-author">${authorText}</p>
+                    </div>
+                `;
+                
+                let versesHtml = '<div class="poem-verses">';
+                if (poem.verses && Array.isArray(poem.verses)) {
+                    poem.verses.forEach(v => {
+                        if(v) {
+                            versesHtml += `
+                                <div class="verse">
+                                    <span class="shatr sadr">${v.sadr || ''}</span>
+                                    <span class="shatr ajuz">${v.ajuz || ''}</span>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                versesHtml += '</div>';
+
+                poemCard.innerHTML = headerHtml + versesHtml;
+                container.appendChild(poemCard);
+            });
+        }, (error) => {
+            console.error(error);
+            container.innerHTML = "<div class='loading'>خطأ في الاتصال بالقاعدة. تأكد من إعدادات القواعد (Rules) في فايربيس.</div>";
+        });
+    </script>
+</body>
+</html>
