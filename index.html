@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>دِيوَانُ الشَّاعِرِ أَنَسِ مُصْطَفَى</title>
     
+    <!-- الأسطر الجديدة المضافة لجعل اللوجو يظهر كأيقونة للموقع وللاختصار على الهاتف -->
+    <link rel="icon" type="image/jpeg" href="profile.jpg">
+    <link rel="apple-touch-icon" href="profile.jpg">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -23,7 +27,17 @@
             align-items: center;
         }
 
-        /* تنسيق حاوية الهيدر لعرض الصورة بجانب العنوان */
+        header h1 {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+            color: #5c4314;
+            border-bottom: 2px double #8c6d31;
+            padding-bottom: 10px;
+        }
+
+        /* تنسيق حاوية الهيدر لعرض الصورة بجانب العنوان بالتوافق مع تعديلك */
         header {
             display: flex;
             align-items: center;
@@ -36,7 +50,7 @@
             max-width: 800px;
         }
 
-        /* كود تنسيق صورة البروفايل الفاخرة */
+        /* كود تنسيق صورة البروفايل الفاخرة لتظهر بشكل دائري رائع كما بالصورة */
         .profile-img {
             width: 80px;
             height: 80px;
@@ -49,7 +63,7 @@
         header h1 {
             font-size: 3rem;
             text-align: center;
-            margin: 0; /* تم تصفير المارجن ليتناسق خطياً مع الصورة */
+            margin: 0;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
             color: #5c4314;
         }
@@ -170,7 +184,7 @@
 <body>
 
     <header>
-        <!-- صورة بروفايل الموقع المضافة بجانب عنوانك -->
+        <!-- استدعاء صورة البروفايل الفاخرة الخاصة بك لتظهر بجانب العنوان -->
         <img src="profile.jpg" alt="صورة البروفايل" class="profile-img">
         <h1>أَبْيَاتُ شِعْرِ أَنَسٍ</h1>
     </header>
@@ -239,7 +253,7 @@
             });
         }, (error) => {
             console.error(error);
-            container.innerHTML = "<div class='loading'>خطأ في الاتصال بالقاعدة. تأكد من إعدادات القواعد (Rules) في فايربيس.</div>";
+            container.innerHTML = "<div class='loading'>خطأ في الاتصال بالقاعدة. تأكد من إعدادات القواعد (Rules) in فايربيس.</div>";
         });
     </script>
 </body>
